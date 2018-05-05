@@ -1,4 +1,4 @@
-# Useful C library
+# Useful C library (libuseful)
 
 Useful is a small and simple C library that provides a few useful algorithms,
 macros and data structures for C programmers.
