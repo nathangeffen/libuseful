@@ -186,6 +186,25 @@ The easiest way to compile programs using Useful is to use pkg-config. E.g.
 gcc myprog.c `pkg-config --cflags --libs useful` -o myprog
 ```
 
-# LICENSE
+# Documentation
+
+Doxygen generated html comes with the distribution. Usually this will be
+installed in */usr/share/doc/useful/*. Open index.html in your browser.
+
+Example code is in */usr/shar/doc/examples*.
+
+# Testing
+
+Run:
+
+```bash
+ninja test
+```
+
+# Bug reports
+
+If you find a bug please create a Github issue.
+
+# License
 
 See LICENSE or COPYING for details.
