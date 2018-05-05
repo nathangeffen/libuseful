@@ -195,7 +195,7 @@ Example code is in */usr/shar/doc/examples*.
 
 # Testing
 
-Run:
+In the build directory run:
 
 ```bash
 ninja test
