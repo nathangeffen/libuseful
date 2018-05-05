@@ -52,7 +52,7 @@
    See @ref useful.h
 
 
-   @copyright Copyright (C) Nathan Geffen, 2017.  (See COPYRIGHT in the root
+   @copyright Copyright (C) Nathan Geffen, 2017.  (See LICENSE in the root
    directory of the distribution)
 
    @date 2018
