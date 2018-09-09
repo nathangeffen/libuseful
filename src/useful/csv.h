@@ -21,7 +21,6 @@
 #ifndef USEFUL_CSV_H
 #define USEFUL_CSV_H
 
-#define _GNU_SOURCE
 #include <assert.h>
 #include <error.h>
 #include <errno.h>
@@ -33,7 +32,7 @@
 
 #include <useful/array.h>
 #include <useful/test.h>
-
+#include <useful/algorithms.h>
 
 /**
    Holds a single row in a csv file

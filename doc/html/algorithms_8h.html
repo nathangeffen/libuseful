@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">useful
-   &#160;<span id="projectnumber">1</span>
+   &#160;<span id="projectnumber">1.0</span>
    </div>
    <div id="projectbrief">Useful algorithms, data structures and macros for C programmers</div>
   </td>
@@ -40,6 +40,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -107,9 +108,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:ad3d8a3bd0c0b677acef144f2c2ef6d73"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad3d8a3bd0c0b677acef144f2c2ef6d73"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>_BSD_SOURCE</b></td></tr>
-<tr class="separator:ad3d8a3bd0c0b677acef144f2c2ef6d73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a724484a23cab81c63f4c7f9136a70371"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a724484a23cab81c63f4c7f9136a70371"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>RANDOM</b>&#160;&#160;&#160;rand() % __to__</td></tr>
+<tr class="separator:a724484a23cab81c63f4c7f9136a70371"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac8a4c48e3cf6311499956510d281bd89"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac8a4c48e3cf6311499956510d281bd89"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="algorithms_8h.html#ac8a4c48e3cf6311499956510d281bd89">VOS</a>(base,  i,  elem_size)&#160;&#160;&#160;(char *) (base) + ( (i) * (elem_size))</td></tr>
 <tr class="memdesc:ac8a4c48e3cf6311499956510d281bd89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate offset for void pointer array. <br /></td></tr>
@@ -117,21 +118,23 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a7b09b914bd87fde805caaa140f061241"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="algorithms_8h.html#a7b09b914bd87fde805caaa140f061241">strdup</a> (const char *src)</td></tr>
+<tr class="separator:a7b09b914bd87fde805caaa140f061241"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93a0dea85f131d97a50394a3c501cb5e"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="algorithms_8h.html#a93a0dea85f131d97a50394a3c501cb5e">rand_to</a> (uint32_t to)</td></tr>
+<tr class="separator:a93a0dea85f131d97a50394a3c501cb5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac005eaa05ec80dbf1a0984d3d4fa80a8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="algorithms_8h.html#ac005eaa05ec80dbf1a0984d3d4fa80a8">swap</a> (void *a, void *b, size_t size)</td></tr>
 <tr class="separator:ac005eaa05ec80dbf1a0984d3d4fa80a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af836d66a0b318422b2cb9965a1226239"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="algorithms_8h.html#af836d66a0b318422b2cb9965a1226239">rand_to</a> (uint32_t to, void *rng)</td></tr>
-<tr class="separator:af836d66a0b318422b2cb9965a1226239"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2460278837f81abd3f88cda48f879ad0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="algorithms_8h.html#a2460278837f81abd3f88cda48f879ad0">shuffle</a> (void *data, size_t nmemb, size_t size, void *gen, uint32_t(*<a class="el" href="algorithms_8h.html#af836d66a0b318422b2cb9965a1226239">rand_to</a>)(uint32_t, void *))</td></tr>
-<tr class="separator:a2460278837f81abd3f88cda48f879ad0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1a61ca119d68f143cde13ceb63ef197"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="algorithms_8h.html#ad1a61ca119d68f143cde13ceb63ef197">shuffle</a> (void *data, size_t nmemb, size_t size)</td></tr>
+<tr class="separator:ad1a61ca119d68f143cde13ceb63ef197"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8de4cd5ca83fb7fec55583c2e5246716"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="algorithms_8h.html#a8de4cd5ca83fb7fec55583c2e5246716">least_dist</a> (const void *elem, const void *arr, size_t nmemb, size_t elem_size, double(*distance)(const void *, const void *))</td></tr>
 <tr class="separator:a8de4cd5ca83fb7fec55583c2e5246716"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeaa156e15ef40db0bcf9365d60122f79"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="algorithms_8h.html#aeaa156e15ef40db0bcf9365d60122f79">knn_match</a> (void *agents, size_t nmemb, unsigned k, bool(*has_partner)(const void *), void(*set_partners)(void *, void *), double(*distance)(const void *, const void *))</td></tr>
 <tr class="separator:aeaa156e15ef40db0bcf9365d60122f79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a759556a7eaf7613f9c5d663663f0a98a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="algorithms_8h.html#a759556a7eaf7613f9c5d663663f0a98a">cspm</a> (void *agents, size_t nmemb, size_t neighbors, unsigned clusters, int(*cmp_cluster)(const void *, const void *), bool(*has_partner)(const void *), void(*set_partners)(void *, void *), double(*distance)(const void *, const void *), void *gen, uint32_t(*<a class="el" href="algorithms_8h.html#af836d66a0b318422b2cb9965a1226239">rand_to</a>)(uint32_t, void *))</td></tr>
-<tr class="separator:a759556a7eaf7613f9c5d663663f0a98a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab85901d1d704cfe4cfbbb2fba0023b91"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="algorithms_8h.html#ab85901d1d704cfe4cfbbb2fba0023b91">cspm</a> (void *agents, size_t nmemb, size_t neighbors, unsigned clusters, int(*cmp_cluster)(const void *, const void *), bool(*has_partner)(const void *), void(*set_partners)(void *, void *), double(*distance)(const void *, const void *))</td></tr>
+<tr class="separator:ab85901d1d704cfe4cfbbb2fba0023b91"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="a759556a7eaf7613f9c5d663663f0a98a"></a>
+<a class="anchor" id="ab85901d1d704cfe4cfbbb2fba0023b91"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -181,19 +184,7 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double(*)(const void *, const void *)&#160;</td>
-          <td class="paramname"><em>distance</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>gen</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t(*)(uint32_t, void *)&#160;</td>
-          <td class="paramname"><em>rand_to</em>&#160;</td>
+          <td class="paramname"><em>distance</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -338,7 +329,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="af836d66a0b318422b2cb9965a1226239"></a>
+<a class="anchor" id="a93a0dea85f131d97a50394a3c501cb5e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -346,23 +337,12 @@ Functions</h2></td></tr>
           <td class="memname">uint32_t rand_to </td>
           <td>(</td>
           <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>to</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>to</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>rng</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Generates a random number in the semi-open range 0 .. to - 1.</p>
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Generates a random number in the semi-open range 0 .. to - 1. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">to</td><td>Upper bound of semi-open range from which to draw random number </td></tr>
     <tr><td class="paramname">rng</td><td>NULL for now </td></tr>
@@ -372,7 +352,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a2460278837f81abd3f88cda48f879ad0"></a>
+<a class="anchor" id="ad1a61ca119d68f143cde13ceb63ef197"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -392,19 +372,7 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>size</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>gen</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t(*)(uint32_t, void *)&#160;</td>
-          <td class="paramname"><em>rand_to</em>&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -424,6 +392,30 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a class="anchor" id="a7b09b914bd87fde805caaa140f061241"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char* strdup </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>src</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Makes a duplicate of a string. It is the caller's responsibility to free the copy.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">src</td><td>Null terminated string. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Copy of the parameter string </dd></dl>
 
 </div>
 </div>

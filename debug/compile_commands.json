@@ -1,0 +1,27 @@
+[
+  {
+    "directory": "/home/nathan/workspace/C/useful/debug",
+    "command": "cc -Isrc/src@@useful@sha -Isrc -I../src -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c11 -O0 -g -fPIC  -MD -MQ 'src/src@@useful@sha/algorithms.c.o' -MF 'src/src@@useful@sha/algorithms.c.o.d' -o 'src/src@@useful@sha/algorithms.c.o' -c ../src/algorithms.c",
+    "file": "../src/algorithms.c"
+  },
+  {
+    "directory": "/home/nathan/workspace/C/useful/debug",
+    "command": "cc -Isrc/src@@useful@sha -Isrc -I../src -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c11 -O0 -g -fPIC  -MD -MQ 'src/src@@useful@sha/array.c.o' -MF 'src/src@@useful@sha/array.c.o.d' -o 'src/src@@useful@sha/array.c.o' -c ../src/array.c",
+    "file": "../src/array.c"
+  },
+  {
+    "directory": "/home/nathan/workspace/C/useful/debug",
+    "command": "cc -Isrc/src@@useful@sha -Isrc -I../src -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c11 -O0 -g -fPIC  -MD -MQ 'src/src@@useful@sha/csv.c.o' -MF 'src/src@@useful@sha/csv.c.o.d' -o 'src/src@@useful@sha/csv.c.o' -c ../src/csv.c",
+    "file": "../src/csv.c"
+  },
+  {
+    "directory": "/home/nathan/workspace/C/useful/debug",
+    "command": "cc -Isrc/src@@useful@sha -Isrc -I../src -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c11 -O0 -g -fPIC  -MD -MQ 'src/src@@useful@sha/test.c.o' -MF 'src/src@@useful@sha/test.c.o.d' -o 'src/src@@useful@sha/test.c.o' -c ../src/test.c",
+    "file": "../src/test.c"
+  },
+  {
+    "directory": "/home/nathan/workspace/C/useful/debug",
+    "command": "cc -Itests/tests@@usefultests@exe -Itests -I../tests -Itests/../src -I../tests/../src -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c11 -O0 -g  -MD -MQ 'tests/tests@@usefultests@exe/tests.c.o' -MF 'tests/tests@@usefultests@exe/tests.c.o.d' -o 'tests/tests@@usefultests@exe/tests.c.o' -c ../tests/tests.c",
+    "file": "../tests/tests.c"
+  }
+]

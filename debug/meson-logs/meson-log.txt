@@ -1,0 +1,29 @@
+Build started at 2018-09-09T19:50:36.585772
+Main binary: /usr/bin/python3
+Python system: Linux
+The Meson build system
+Version: 0.46.0
+Source dir: /home/nathan/workspace/C/useful
+Build dir: /home/nathan/workspace/C/useful/debug
+Build type: native build
+Project name: useful
+Native C compiler: cc (gcc 5.4.0 "cc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609")
+Build machine cpu family: x86_64
+Build machine cpu: x86_64
+Running compile:
+Working directory:  /tmp/tmp5obwvzmp
+Command line:  cc /tmp/tmp5obwvzmp/testfile.c -pipe -D_FILE_OFFSET_BITS=64 -o /tmp/tmp5obwvzmp/output.exe -O0 -Wl,--start-group -lm -Wl,--end-group 
+
+Code:
+ int main(int argc, char **argv) { return 0; }
+Compiler stdout:
+ 
+Compiler stderr:
+ 
+Library m found: YES
+Adding test "API check".
+Program valgrind found: YES (/usr/bin/valgrind)
+Adding test "Memory leak check".
+Program doxygen found: YES (/usr/bin/doxygen)
+Build targets in project: 3
+Found ninja-1.7.1 at /usr/bin/ninja

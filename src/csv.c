@@ -4,8 +4,6 @@
    \brief Definitions of csv management functions
 
 */
-#define _GNU_SOURCE
-
 #include "useful/csv.h"
 
 struct string {

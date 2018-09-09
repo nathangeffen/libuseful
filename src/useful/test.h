@@ -21,8 +21,10 @@
    Convenient wrapper for debug output.
 */
 
-#define DBG(str, ...)							\
-	printf("DEBUG %s %d: " str "\n", __FILE__, __LINE__,  __VA_ARGS__)
+#define DBG(...)							\
+	printf("DEBUG %s %d: ", __FILE__, __LINE__);			\
+	printf(__VA_ARGS__);						\
+	printf("\n")
 
 /**
    Holds information about a test group, including number of successes,

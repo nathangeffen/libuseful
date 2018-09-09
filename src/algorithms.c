@@ -1,6 +1,57 @@
 /* Generic C functions */
 
+#include <error.h>
+#include <errno.h>
 #include <useful/algorithms.h>
+
+/**
+   Makes a duplicate of a string. It is the caller's responsibility to
+   free the copy.
+
+   \param src Null terminated string.
+   \return Copy of the parameter string
+ */
+
+
+char * strdup(const char * src)
+{
+	char *dest = malloc(strlen(src) + 1), *p = dest;
+        if (dest == NULL)
+            error(EXIT_FAILURE, errno,
+                  "Failed to allocate space for string.");
+
+	while (*src)
+		*p++ = *src++;
+	*p = 0;
+	return dest;
+}
+
+/**
+   Generates a random number in the semi-open range 0 .. to - 1.
+   \param to Upper bound of semi-open range from which to draw random number
+   \param rng NULL for now
+ */
+
+uint32_t rand_to(uint32_t to)
+{
+	uint32_t num_bins = to;
+	uint32_t num_rand = ~( to & 0);
+	uint32_t bin_size = num_rand / num_bins;
+	uint32_t defect = num_rand % num_bins;
+
+	uint32_t x;
+	do {
+#if _SVID_SOURCE || _BSD_SOURCE || _XOPEN_SOURCE >= 500 \
+	|| _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED
+		x = random();
+#else
+		x = rand();
+#endif
+	} while (num_rand - defect <= (unsigned long) x);
+
+	return x / bin_size;
+}
+
 
 /**
    Swaps the values of *a* and *b*.
@@ -16,29 +67,6 @@ void swap(void *a, void *b, size_t size)
 	memmove(b, t, size);
 }
 
-
-
-/**
-   Generates a random number in the semi-open range 0 .. to - 1.
-
-   \param to Upper bound of semi-open range from which to draw random number
-   \param rng NULL for now
- */
-
-uint32_t rand_to(uint32_t to, void * rng) {
-	uint32_t num_bins = to;
-	uint32_t num_rand = ~( to & 0);
-	uint32_t bin_size = num_rand / num_bins;
-	uint32_t defect = num_rand % num_bins;
-
-	uint32_t x;
-	do {
-		x = random();
-	} while (num_rand - defect <= (unsigned long) x);
-
-	return x / bin_size;
-}
-
 /**
    Shuffles an array.
 
@@ -49,12 +77,12 @@ uint32_t rand_to(uint32_t to, void * rng) {
    \param rand_to Function that returns random int than its first parameter.
    Its second parameter is gen.
  */
-void shuffle(void *data, size_t nmemb, size_t size, void * gen,
-	uint32_t (* rand_to)(uint32_t, void *) )
+void shuffle(void *data, size_t nmemb, size_t size)
 {
 
 	for (size_t i = nmemb; i-- > 1; ) {
-		size_t j =  rand_to(i + 1, gen);
+		size_t __to__ = i + 1;
+		size_t j =  RANDOM;
 		swap( VOS(data, i, size), VOS(data, j, size), size );
 	}
 }
@@ -132,13 +160,14 @@ void knn_match(void * agents, size_t nmemb, unsigned k,
    \param rand_to Function that returns random int than its first parameter.
    Its second parameter is gen.
  */
-void cspm(void * agents, size_t nmemb, size_t k, unsigned clusters,
+void cspm(
+	void * agents,
+	size_t nmemb, size_t k, unsigned clusters,
 	int (*cmp_cluster)(const void *, const void *),
 	bool (*has_partner)(const void *), // Does agent have partner
 	void (*set_partners)(void *, void *), // Set agents to be partners
-	double (*distance)(const void *, const void *), // Distance between two agents
-	void * gen,
-	uint32_t (* rand_to)(uint32_t, void *))
+	double (*distance)(const void *, const void *)) // Distance between two agents
+
 {
 	const size_t elem_size = sizeof(agents);
 	size_t cluster_size = nmemb / clusters;
@@ -150,8 +179,7 @@ void cspm(void * agents, size_t nmemb, size_t k, unsigned clusters,
 		size_t first = i * cluster_size;
 		size_t last = first + cluster_size;
 		if (last > nmemb) last = nmemb;
-		shuffle(VOS(agents, first, elem_size), last - first, elem_size,
-			gen, rand_to);
+		shuffle(VOS(agents, first, elem_size), last - first, elem_size);
 	}
 
 	knn_match(agents, nmemb, k, has_partner, set_partners, distance);

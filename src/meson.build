@@ -22,7 +22,3 @@ pkg.generate(libraries : libs,
              name : meson.project_name(),
              filebase : dir_name,
              description : project_description)
-
-# Tests
-e = executable('usefultests', 'tests.c', link_with : lib, dependencies: m_dep)
-test('Unit tests', e)

@@ -7,5 +7,7 @@ lib_name = 'lib' + dir_name
 lib_version = meson.project_version() + '.0'
 project_description = 'Useful C data structures, algorithms and macros'
 
+
 subdir('src')
+subdir('tests')
 subdir('doc')

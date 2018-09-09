@@ -198,7 +198,7 @@ Example code is in */usr/shar/doc/examples*.
 In the build directory run:
 
 ```bash
-ninja test
+meson test
 ```
 
 # Bug reports
