@@ -30,9 +30,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <useful/array.h>
-#include <useful/test.h>
-#include <useful/algorithms.h>
+#include "useful/array.h"
+#include "useful/test.h"
+#include "useful/algorithms.h"
 
 /**
    Holds a single row in a csv file

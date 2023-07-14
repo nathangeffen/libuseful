@@ -17,6 +17,8 @@
      gsl</a>: algorithms.h
    - <a href="csv_8h.html">CSV file input and output, and conversion to and from
      R-like dataframes</a>: csv.h
+   - <a href="check_8h.html">Macros to do make C error checking a touch more
+     convenient
 
    @section install_sec Installation
 
@@ -66,9 +68,11 @@
    Includes the header files for the rest of the *Useful* project.
  */
 
-#include <useful/test.h>
-#include <useful/array.h>
-#include <useful/algorithms.h>
-#include <useful/csv.h>
+#include "useful/test.h"
+#include "useful/array.h"
+#include "useful/algorithms.h"
+#include "useful/csv.h"
+#include "useful/check.h"
+
 
 #endif

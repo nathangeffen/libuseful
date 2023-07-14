@@ -13,13 +13,10 @@
  */
 
 
-char * strdup(const char * src)
+char * u_strdup(const char * src)
 {
 	char *dest = malloc(strlen(src) + 1), *p = dest;
-        if (dest == NULL)
-            error(EXIT_FAILURE, errno,
-                  "Failed to allocate space for string.");
-
+        if (dest == NULL) return NULL;
 	while (*src)
 		*p++ = *src++;
 	*p = 0;
@@ -32,7 +29,7 @@ char * strdup(const char * src)
    \param rng NULL for now
  */
 
-uint32_t rand_to(uint32_t to)
+uint32_t u_rand_to(uint32_t to)
 {
 	uint32_t num_bins = to;
 	uint32_t num_rand = ~( to & 0);
@@ -59,7 +56,7 @@ uint32_t rand_to(uint32_t to)
    \param size The number of bytes contained in *a* and *b*.
  */
 
-void swap(void *a, void *b, size_t size)
+void u_swap(void *a, void *b, size_t size)
 {
 	char t[size];
 	memmove(t, a, size);
@@ -77,13 +74,12 @@ void swap(void *a, void *b, size_t size)
    \param rand_to Function that returns random int than its first parameter.
    Its second parameter is gen.
  */
-void shuffle(void *data, size_t nmemb, size_t size)
+void u_shuffle(void *data, size_t nmemb, size_t size)
 {
-
 	for (size_t i = nmemb; i-- > 1; ) {
 		size_t __to__ = i + 1;
 		size_t j =  RANDOM;
-		swap( VOS(data, i, size), VOS(data, j, size), size );
+		u_swap( U_VOS(data, i, size), U_VOS(data, j, size), size );
 	}
 }
 
@@ -98,14 +94,14 @@ void shuffle(void *data, size_t nmemb, size_t size)
 
    \return index of element in *arr* that is closest to *elem*.
  */
-size_t least_dist(const void *elem, const void *arr,
+size_t u_least_dist(const void *elem, const void *arr,
 		size_t nmemb, size_t elem_size,
 		double (*distance)(const void *, const void *))
 {
 	double least_distance = DBL_MAX;
 	size_t least_index = nmemb;
 	for (size_t i = 0; i < nmemb; ++i) {
-		double d = distance(elem, VOS(arr, i, elem_size));
+		double d = distance(elem, U_VOS(arr, i, elem_size));
 		if ( d < least_distance) {
 			least_distance = d;
 			least_index = i;
@@ -126,21 +122,21 @@ size_t least_dist(const void *elem, const void *arr,
    \param set_partners Function that places two agents into a partnership
    \param distance Measures distance between two agents
 */
-void knn_match(void * agents, size_t nmemb, unsigned k,
+void u_knn_match(void * agents, size_t nmemb, unsigned k,
 	bool (*has_partner)(const void *), void (*set_partners)(void *, void *),
 	double (*distance)(const void *, const void *))
 {
 	const size_t elem_size = sizeof(agents);
 	for (size_t i = 0; i < nmemb - 1; ++i) {
-		if (has_partner( VOS(agents, i, elem_size))) continue;
+		if (has_partner( U_VOS(agents, i, elem_size))) continue;
 		size_t n, start = i + 1;
 		n = (start + k) < nmemb ? k : nmemb - start;
-		size_t best = least_dist(VOS(agents, i, elem_size),
-					VOS(agents, start, elem_size), n,
+		size_t best = u_least_dist(U_VOS(agents, i, elem_size),
+					U_VOS(agents, start, elem_size), n,
 					elem_size, distance);
 		if (best < n)
-			set_partners(VOS(agents, i, elem_size),
-				VOS(agents, start + best, elem_size));
+			set_partners(U_VOS(agents, i, elem_size),
+				U_VOS(agents, start + best, elem_size));
 	}
 }
 
@@ -160,7 +156,7 @@ void knn_match(void * agents, size_t nmemb, unsigned k,
    \param rand_to Function that returns random int than its first parameter.
    Its second parameter is gen.
  */
-void cspm(
+void u_cspm(
 	void * agents,
 	size_t nmemb, size_t k, unsigned clusters,
 	int (*cmp_cluster)(const void *, const void *),
@@ -179,8 +175,8 @@ void cspm(
 		size_t first = i * cluster_size;
 		size_t last = first + cluster_size;
 		if (last > nmemb) last = nmemb;
-		shuffle(VOS(agents, first, elem_size), last - first, elem_size);
+		u_shuffle(U_VOS(agents, first, elem_size), last - first, elem_size);
 	}
 
-	knn_match(agents, nmemb, k, has_partner, set_partners, distance);
+	u_knn_match(agents, nmemb, k, has_partner, set_partners, distance);
 }

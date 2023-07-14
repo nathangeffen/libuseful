@@ -17,12 +17,12 @@ static struct csv_row csv_append_row(const char * strings[], size_t n)
 	struct csv_row row;
 	char * s;
 
-	ARRAY_NEW(row, cells);
+	U_ARRAY_NEW(row, cells);
 	for (size_t i = 0; i < n; ++i) {
-		if ( NULL == (s = strdup(strings[i])) )
+		if ( NULL == (s = u_strdup(strings[i])) )
 				error(EXIT_FAILURE, errno,
 					"Failed to allocate space for cell.");
-		ARRAY_PUSH(row, cells, s);
+		U_ARRAY_PUSH(row, cells, s);
 	}
 
 	return row;
@@ -38,7 +38,7 @@ static struct csv_row csv_append_row(const char * strings[], size_t n)
    @return Empty ready-to-use csv structure with a header if specified.
  */
 
-struct csv csv_new(bool header, const char * strings[], size_t n)
+struct csv u_csv_new(bool header, const char * strings[], size_t n)
 {
 
 	struct csv cs;
@@ -48,7 +48,7 @@ struct csv csv_new(bool header, const char * strings[], size_t n)
 		cs.header.len = cs.header.capacity = 0;
 		cs.header.cells = NULL;
 	}
-	ARRAY_NEW(cs, rows);
+	U_ARRAY_NEW(cs, rows);
 	return cs;
 }
 
@@ -65,7 +65,7 @@ void csv_append(struct csv * cs, const char * strings[], size_t n)
 {
 	struct csv_row row;
 	row = csv_append_row(strings, n);
-	ARRAY_PUSH(*cs, rows, row);
+	U_ARRAY_PUSH(*cs, rows, row);
 }
 
 static struct csv_row csv_read_row(FILE *f, const char delim)
@@ -75,13 +75,13 @@ static struct csv_row csv_read_row(FILE *f, const char delim)
 	bool inrow = true, inquote = false;
 	char c, *s;
 
-	ARRAY_NEW(row, cells);
-	ARRAY_NEW(cell, str);
+	U_ARRAY_NEW(row, cells);
+	U_ARRAY_NEW(cell, str);
 	while(inrow) {
 		bool endcell = false;
 		if ( (c = fgetc(f)) == '"') {
 			if ( (c = fgetc(f)) == '"' && inquote) {
-				ARRAY_PUSH(cell, str, c);
+				U_ARRAY_PUSH(cell, str, c);
 			} else {
 				ungetc(c, f);
 				inquote = !inquote;
@@ -92,21 +92,21 @@ static struct csv_row csv_read_row(FILE *f, const char delim)
 			inrow = false;
 			if (c == EOF) ungetc(c, f);
 		} else {
-			ARRAY_PUSH(cell, str, c);
+			U_ARRAY_PUSH(cell, str, c);
 		}
 		if (endcell || inrow == false) {
-			ARRAY_PUSH(cell, str, '\0');
-			if ( NULL == (s = strdup(cell.str)) )
+			U_ARRAY_PUSH(cell, str, '\0');
+			if ( NULL == (s = u_strdup(cell.str)) )
 				error(EXIT_FAILURE, errno,
 					"Failed to allocate space for cell.");
 			if (strlen(s) || !(c == EOF || c == '\n'))
-				ARRAY_PUSH(row, cells, s);
+				U_ARRAY_PUSH(row, cells, s);
 			else
 				free(s);
 			cell.len = 0;
 		}
 	}
-	ARRAY_FREE(cell, str);
+	U_ARRAY_FREE(cell, str);
 	return row;
 }
 
@@ -125,16 +125,16 @@ struct csv csv_read(FILE *f, bool header, char delim)
 	struct csv cs;
 	struct csv_row row;
 
-	ARRAY_NEW(cs, rows);
+	U_ARRAY_NEW(cs, rows);
 	if (header)
 		cs.header = csv_read_row(f, delim);
 	else
-		ARRAY_NEW(cs.header, cells);
+		U_ARRAY_NEW(cs.header, cells);
 
 	while ( (row = csv_read_row(f, delim)).len > 0 )
-			ARRAY_PUSH(cs, rows, row);
+			U_ARRAY_PUSH(cs, rows, row);
 
-	ARRAY_FREE(row, cells);
+	U_ARRAY_FREE(row, cells);
 
 	return cs;
 }
@@ -223,7 +223,7 @@ static void csv_free_row(struct csv_row * row)
 {
 	for (size_t i = 0; i < row->len; ++i)
 		free(row->cells[i]);
-	ARRAY_FREE(*row, cells);
+	U_ARRAY_FREE(*row, cells);
 }
 
 /**
@@ -240,7 +240,7 @@ void csv_free(struct csv * cs)
 
 	for (size_t i = 0; i < cs->len; ++i)
 		csv_free_row(&cs->rows[i]);
-	ARRAY_FREE(*cs, rows);
+	U_ARRAY_FREE(*cs, rows);
 }
 
 static void csv_row_to_df_row(const struct csv *cs, struct dataframe * df,
@@ -250,7 +250,7 @@ static void csv_row_to_df_row(const struct csv *cs, struct dataframe * df,
 	for (size_t i = 0; i < cols; ++i) {
 		if (col_types[i] == str) {
 			df->vals[row * cols + i].str =
-				strdup(csv_at(cs, row, i));
+				u_strdup(csv_at(cs, row, i));
 		} else {
 			char * ptr;
 			df->vals[row * cols + i].dbl =
@@ -270,13 +270,13 @@ static struct csv_row rowdup(const struct csv_row * row)
 	struct csv_row result;
 	char * s;
 
-	ARRAY_NEW(result, cells);
+	U_ARRAY_NEW(result, cells);
 	for (size_t i = 0; i < row->len; ++i) {
-		if (NULL == (s = strdup(row->cells[i]) ) )
+		if (NULL == (s = u_strdup(row->cells[i]) ) )
 			error(EXIT_FAILURE, errno,
 				"Failed to allocate space for "
 				"string in duplicate row.");
-		ARRAY_PUSH(result, cells, s);
+		U_ARRAY_PUSH(result, cells, s);
 	}
 
 	return result;
@@ -412,7 +412,7 @@ void dataframe_append(struct dataframe *df, const union str_dbl vals[])
 	for (size_t i = 0, j = df->rows * cols; i < cols; ++i, ++j) {
 		switch(df->type[i]) {
 		case str:
-			df->vals[j].str = strdup(vals[i].str);
+			df->vals[j].str = u_strdup(vals[i].str);
 			if (NULL == df->vals[j].str)
 				error(EXIT_FAILURE, errno, "Failed to allocate "
 					"space for dataframe cell.");
@@ -449,7 +449,7 @@ void dataframe_append_var(struct dataframe *df, ...)
 	for (size_t i = 0, j = df->rows * cols; i < cols; ++i, ++j) {
 		switch(df->type[i]) {
 		case str:
-			df->vals[j].str = strdup(va_arg(ap, char *));
+			df->vals[j].str = u_strdup(va_arg(ap, char *));
 			if (NULL == df->vals[j].str)
 				error(EXIT_FAILURE, errno, "Failed to allocate "
 					"space for dataframe cell.");
@@ -494,7 +494,7 @@ void dataframe_write(FILE *f, const struct dataframe * df)
 
 struct  csv dataframe_to_csv(const struct dataframe * df)
 {
-	struct csv cs = csv_new(true, (const char **) df->header.cells,
+	struct csv cs = u_csv_new(true, (const char **) df->header.cells,
 				df->header.len);
 	const size_t rows = df->rows, cols = df->cols;
 	for (size_t i = 0; i < rows; ++i) {
@@ -504,12 +504,12 @@ struct  csv dataframe_to_csv(const struct dataframe * df)
 			if (df->type[j] == dbl)  {
 				char s[50];
 				snprintf(s, 50, "%f", df->vals[i*cols+j].dbl);
-				if ( (strings[j] = strdup(s) ) == NULL)
+				if ( (strings[j] = u_strdup(s) ) == NULL)
 					error(EXIT_FAILURE, errno,
 						"Failed to allocate space for "
 						"csv cell.");
 			} else {
-				strings[j] = strdup(df->vals[i*cols + j].str);
+				strings[j] = u_strdup(df->vals[i*cols + j].str);
 				if (NULL == strings[j])
 					error(EXIT_FAILURE, errno,
 						"Failed to allocate space for "
@@ -517,7 +517,7 @@ struct  csv dataframe_to_csv(const struct dataframe * df)
 			}
 		}
 		row = csv_append_row( (const char **) strings, cols);
-		ARRAY_PUSH(cs, rows, row);
+		U_ARRAY_PUSH(cs, rows, row);
 		for (size_t j = 0; j < cols; ++j) free(strings[j]);
 	}
 	return cs;
