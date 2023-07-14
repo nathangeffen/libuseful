@@ -12,8 +12,7 @@ Useful includes:
 
 # Dependencies
 
-Useful is installed using the [Meson build system](http://mesonbuild.com/)
-(which is much better designed and easier to use than Autotools or CMake).
+Useful is installed using the [Meson build system](http://mesonbuild.com/).
 
 Here is how you'd install Meson on Ubuntu-like systems:
 

@@ -1,9 +1,0 @@
-prefix=/usr/local
-libdir=${prefix}/lib/x86_64-linux-gnu
-includedir=${prefix}/include
-
-Name: useful
-Description: Useful C data structures, algorithms and macros
-Version: 1.0
-Libs: -luseful
-Cflags: -I${includedir}/useful
