@@ -72,6 +72,7 @@
 #include "useful/array.h"
 #include "useful/algorithms.h"
 #include "useful/csv.h"
+#include "useful/string.h"
 #include "useful/check.h"
 
 

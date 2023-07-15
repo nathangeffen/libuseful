@@ -27,6 +27,21 @@ Note: The programmer is responsible for allocating and freeing elements of the
 array if these contain dynamically allocated memory.
 
 Here is an example:
+#include <stdlib.h>
+#include <string.h>
+#include "useful/string.h"
+
+void u_strcat(char *dest, const char *src)
+{
+        size_t len_d = strlen(dest);
+        size_t len_s = strlen(src);
+
+        char *s = realloc(dest, len_s + len_d + 1);
+        if (s != NULL) {
+                dest = s;
+                strcat(dest, src);
+        }
+}
 
 @include arrays.c
 

@@ -1,6 +1,6 @@
 cc = meson.get_compiler('c')
 m_dep = cc.find_library('m', required : false)
-src = ['algorithms.c',  'array.c',  'csv.c',  'test.c']
+src = ['algorithms.c',  'array.c',  'csv.c',  'test.c', 'string.c']
 
 lib = shared_library(meson.project_name(), sources : src, dependencies: m_dep,
                      version : lib_version, soversion : '0', install : true)
@@ -9,8 +9,9 @@ lib = shared_library(meson.project_name(), sources : src, dependencies: m_dep,
 include_subdir = join_paths(dir_name, 'useful')
 
 install_headers('useful.h', subdir: dir_name)
-install_headers('useful/array.h', 'useful/algorithms.h',
-                'useful/csv.h', 'useful/test.h', subdir: include_subdir)
+install_headers('useful/array.h', 'useful/algorithms.h', 'useful/check.h',
+                'useful/csv.h', 'useful/test.h', 'useful/string.h',
+                subdir: include_subdir)
 
 # Pkgconfig
 pkg = import('pkgconfig')
