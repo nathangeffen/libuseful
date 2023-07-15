@@ -166,7 +166,7 @@ size_t u_array_grow(void **array, size_t current_capacity, size_t object_size);
   Frees an array and its elements.
 
   @param array Struct variable containing the array
-  @param element Struct pointer element that represents the array
+  @param element Struct pointer element that holds the array's data
   */
 #define U_ARRAY_FREE_ELEMS(array, element) do {				\
     U_ARRAY_FREE_ELEMS_CUSTOM((array), element,		\
