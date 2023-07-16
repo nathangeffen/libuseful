@@ -10,7 +10,6 @@
     u_test_group's verbose value to false.
 */
 
-
 #ifndef USEFUL_TEST_H
 #define USEFUL_TEST_H
 
@@ -32,9 +31,9 @@
  */
 
 struct u_test_group {
-	unsigned successes;
-	unsigned failures;
-	bool verbose;
+        unsigned successes;
+        unsigned failures;
+        bool verbose;
 };
 
 #define U_EQ(X, Y) ( (X) == (Y) )
@@ -70,7 +69,6 @@ struct u_test_group {
 					#comparator, #expected);	\
 		}							\
 	} while(0)
-
 
 /**
    Macro that checks if two operands are equal for a test in a test group.
@@ -121,8 +119,7 @@ struct u_test_group {
  */
 #define U_TESTLE(X, Y, u_test_group) U_TEST( (X), (Y), U_LE, true, u_test_group)
 
-
-void u_test_group_new(struct u_test_group* test_group);
-void u_test_group_summary(const struct u_test_group* test_group);
+void u_test_group_new(struct u_test_group *test_group);
+void u_test_group_summary(const struct u_test_group *test_group);
 
 #endif

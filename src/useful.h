@@ -17,6 +17,8 @@
      gsl</a>: algorithms.h
    - <a href="csv_8h.html">CSV file input and output, and conversion to and from
      R-like dataframes</a>: csv.h
+   - <a href="string_8h.html">String handling functions that handle memory
+     memory allocation
    - <a href="check_8h.html">Macros to do make C error checking a touch more
      convenient
 
@@ -53,7 +55,6 @@
 
    See @ref useful.h
 
-
    @copyright Copyright (C) Nathan Geffen, 2017.  (See LICENSE in the root
    directory of the distribution)
 
@@ -74,6 +75,5 @@
 #include "useful/csv.h"
 #include "useful/string.h"
 #include "useful/check.h"
-
 
 #endif

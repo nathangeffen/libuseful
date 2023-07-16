@@ -17,7 +17,6 @@
 #endif
 #endif
 
-
 #include <float.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -25,11 +24,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 /// Calculate offset for void pointer array
 #define U_VOS(base, i, elem_size) (char *) (base) + ( (i) * (elem_size))
 
-char * u_strdup(const char * src);
+char *u_strdup(const char *src);
 
 uint32_t u_rand_to(uint32_t to);
 
@@ -38,17 +36,18 @@ void u_swap(void *a, void *b, size_t size);
 void u_shuffle(void *data, size_t nmemb, size_t size);
 
 size_t u_least_dist(const void *elem, const void *arr,
-		size_t nmemb, size_t elem_size,
-		double (*distance)(const void *, const void *));
+                    size_t nmemb, size_t elem_size,
+                    double (*distance)(const void *, const void *));
 
-void u_knn_match(void * agents, size_t nmemb, unsigned k,
-	bool (*has_partner)(const void *), void (*set_partners)(void *, void *),
-	double (*distance)(const void *, const void *));
+void u_knn_match(void *agents, size_t nmemb, unsigned k,
+                 bool (*has_partner)(const void *), void(*set_partners)(void *,
+                                                                        void *),
+                 double(*distance)(const void *, const void *));
 
-void u_cspm(void* agents, size_t nmemb, size_t neighbors, unsigned clusters,
-	int (*cmp_cluster)(const void *, const void *),
-	bool (*has_partner)(const void *),
-	void (*set_partners)(void *, void *),
-	double (*distance)(const void *, const void *));
+void u_cspm(void *agents, size_t nmemb, size_t neighbors, unsigned clusters,
+            int (*cmp_cluster)(const void *, const void *),
+            bool(*has_partner)(const void *),
+            void(*set_partners)(void *, void *),
+            double(*distance)(const void *, const void *));
 
 #endif

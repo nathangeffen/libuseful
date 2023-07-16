@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include "useful/string.h"
+
+/**
+ * Copies src string to dest.
+ */
 static inline void copy(struct u_string *dest, const char *src)
 {
         const char *s = src;
@@ -12,18 +16,38 @@ static inline void copy(struct u_string *dest, const char *src)
         } while (errno == 0 && *s++ != 0);
 }
 
+/*
+ * Concatenates src to dest, managing memory in the process.
+ *
+ * \param dest String to concat to
+ * \param src Null terminated string to append to dest
+ */
 void u_strcat(struct u_string *dest, const char *src)
 {
         --dest->len;            // pop the end of string marker
         copy(dest, src);
 }
 
+/*
+ * Copies src to dest, managing memory in the process.
+ *
+ * \param dest String to copy to
+ * \param src Null terminated string to copy from
+ */
 void u_strcpy(struct u_string *dest, const char *src)
 {
         dest->len = 0;          // empty the string
         copy(dest, src);
 }
 
+/*
+ * Implements the stdlib fgets function, in addition taking care of memory.
+ *
+ * \param dest String in which to store line from file
+ * \param file File to read next line from
+ *
+ * \return Upon success the null-terminated string, dest->str else NULL
+ */
 char *u_fgets(struct u_string *dest, FILE * file)
 {
         char c;
@@ -45,6 +69,16 @@ char *u_fgets(struct u_string *dest, FILE * file)
         return NULL;
 }
 
+/*
+ * Implements the sprintf function, in addition taking care of memory.
+ *
+ * \param dest String in which to place output
+ * \param fmt String that specifies format - see sprintf for details
+ * \param ... See sprintf for details
+ *
+ * \return Number of characters in dest->str (as reported by vsnprintf) upon
+ * success else -1 upon failure.
+ */
 int u_sprintf(struct u_string *dest, const char *fmt, ...)
 {
         va_list ap;
@@ -55,7 +89,7 @@ int u_sprintf(struct u_string *dest, const char *fmt, ...)
                 int j =
                     u_array_grow((void *)&dest->str, i * sizeof(*dest->str), i);
                 if (j == 0)
-                        return 0;
+                        return -1;
                 dest->capacity = j;
         }
         va_end(ap);
@@ -66,6 +100,12 @@ int u_sprintf(struct u_string *dest, const char *fmt, ...)
         return i;
 }
 
+/*
+ * Appends a character to the end of a string, taking care of memory.
+ *
+ * \param dest String which must be appended
+ * \param c Character to append
+ */
 void u_string_pushchar(struct u_string *dest, char c)
 {
         dest->str[dest->len - 1] = c;
@@ -73,17 +113,30 @@ void u_string_pushchar(struct u_string *dest, char c)
                 U_ARRAY_PUSH(*dest, str, '\0');
 }
 
+/*
+ * Creates a new string that is a substring of another.
+ *
+ * \param string String from which substring must be taken
+ * \param index Index in string->str to start the substr
+ * \param n Number of characters to include in the substr (if this goes
+ * beyond the string->str's null character then the substring stops there)
+ *
+ * \return the null-terminated substring stored in a struct u_string
+ */
 struct u_string u_substr(const struct u_string *string, size_t index, size_t n)
 {
         U_STRING(result);
-        for (size_t i = index; i < string->len && i < index + n; i++)
+        for (size_t i = index; i < string->len && i < index + n && errno == 0; i++)
                 u_string_pushchar(&result, string->str[i]);
-        if (result.str[result.len - 1] != '\0')
+        if (result.str[result.len - 1] != '\0' && errno == 0)
                 u_string_pushchar(&result, '\0');
         return result;
 }
 
-static bool in(const char *delims, char c)
+/*
+ * Checks if a character is in a set of delimiters.
+ */
+static inline bool in(const char *delims, char c)
 {
         for (const char *s = delims; *s != '\0'; s++)
                 if (c == *s)
@@ -91,6 +144,15 @@ static bool in(const char *delims, char c)
         return false;
 }
 
+/*
+ * Splits a string into an array of strings. Characters in delims
+ * indicate the delimiters. No zero length strings are included in the output.
+ *
+ * \param string_to_split String to split
+ * \param delims Set of chars that are the delimiters of string_to_split
+ *
+ * \return Array of struct u_strings with null-terminated strings
+ */
 struct u_string_array u_string_split(const char *string_to_split,
                                      const char *delims)
 {

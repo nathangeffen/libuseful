@@ -12,15 +12,15 @@
    \return Copy of the parameter string
  */
 
-
-char * u_strdup(const char * src)
+char *u_strdup(const char *src)
 {
-	char *dest = malloc(strlen(src) + 1), *p = dest;
-        if (dest == NULL) return NULL;
-	while (*src)
-		*p++ = *src++;
-	*p = 0;
-	return dest;
+        char *dest = malloc(strlen(src) + 1), *p = dest;
+        if (dest == NULL)
+                return NULL;
+        while (*src)
+                *p++ = *src++;
+        *p = 0;
+        return dest;
 }
 
 /**
@@ -31,24 +31,23 @@ char * u_strdup(const char * src)
 
 uint32_t u_rand_to(uint32_t to)
 {
-	uint32_t num_bins = to;
-	uint32_t num_rand = ~( to & 0);
-	uint32_t bin_size = num_rand / num_bins;
-	uint32_t defect = num_rand % num_bins;
+        uint32_t num_bins = to;
+        uint32_t num_rand = ~(to & 0);
+        uint32_t bin_size = num_rand / num_bins;
+        uint32_t defect = num_rand % num_bins;
 
-	uint32_t x;
-	do {
+        uint32_t x;
+        do {
 #if _SVID_SOURCE || _BSD_SOURCE || _XOPEN_SOURCE >= 500 \
 	|| _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED
-		x = random();
+                x = random();
 #else
-		x = rand();
+                x = rand();
 #endif
-	} while (num_rand - defect <= (unsigned long) x);
+        } while (num_rand - defect <= (unsigned long)x);
 
-	return x / bin_size;
+        return x / bin_size;
 }
-
 
 /**
    Swaps the values of *a* and *b*.
@@ -58,10 +57,10 @@ uint32_t u_rand_to(uint32_t to)
 
 void u_swap(void *a, void *b, size_t size)
 {
-	char t[size];
-	memmove(t, a, size);
-	memmove(a, b, size);
-	memmove(b, t, size);
+        char t[size];
+        memmove(t, a, size);
+        memmove(a, b, size);
+        memmove(b, t, size);
 }
 
 /**
@@ -76,11 +75,11 @@ void u_swap(void *a, void *b, size_t size)
  */
 void u_shuffle(void *data, size_t nmemb, size_t size)
 {
-	for (size_t i = nmemb; i-- > 1; ) {
-		size_t __to__ = i + 1;
-		size_t j =  RANDOM;
-		u_swap( U_VOS(data, i, size), U_VOS(data, j, size), size );
-	}
+        for (size_t i = nmemb; i-- > 1;) {
+                size_t __to__ = i + 1;
+                size_t j = RANDOM;
+                u_swap(U_VOS(data, i, size), U_VOS(data, j, size), size);
+        }
 }
 
 /**
@@ -95,19 +94,19 @@ void u_shuffle(void *data, size_t nmemb, size_t size)
    \return index of element in *arr* that is closest to *elem*.
  */
 size_t u_least_dist(const void *elem, const void *arr,
-		size_t nmemb, size_t elem_size,
-		double (*distance)(const void *, const void *))
+                    size_t nmemb, size_t elem_size,
+                    double (*distance)(const void *, const void *))
 {
-	double least_distance = DBL_MAX;
-	size_t least_index = nmemb;
-	for (size_t i = 0; i < nmemb; ++i) {
-		double d = distance(elem, U_VOS(arr, i, elem_size));
-		if ( d < least_distance) {
-			least_distance = d;
-			least_index = i;
-		}
-	}
-	return least_index;
+        double least_distance = DBL_MAX;
+        size_t least_index = nmemb;
+        for (size_t i = 0; i < nmemb; ++i) {
+                double d = distance(elem, U_VOS(arr, i, elem_size));
+                if (d < least_distance) {
+                        least_distance = d;
+                        least_index = i;
+                }
+        }
+        return least_index;
 }
 
 /**
@@ -122,22 +121,24 @@ size_t u_least_dist(const void *elem, const void *arr,
    \param set_partners Function that places two agents into a partnership
    \param distance Measures distance between two agents
 */
-void u_knn_match(void * agents, size_t nmemb, unsigned k,
-	bool (*has_partner)(const void *), void (*set_partners)(void *, void *),
-	double (*distance)(const void *, const void *))
+void u_knn_match(void *agents, size_t nmemb, unsigned k,
+                 bool (*has_partner)(const void *), void(*set_partners)(void *,
+                                                                        void *),
+                 double(*distance)(const void *, const void *))
 {
-	const size_t elem_size = sizeof(agents);
-	for (size_t i = 0; i < nmemb - 1; ++i) {
-		if (has_partner( U_VOS(agents, i, elem_size))) continue;
-		size_t n, start = i + 1;
-		n = (start + k) < nmemb ? k : nmemb - start;
-		size_t best = u_least_dist(U_VOS(agents, i, elem_size),
-					U_VOS(agents, start, elem_size), n,
-					elem_size, distance);
-		if (best < n)
-			set_partners(U_VOS(agents, i, elem_size),
-				U_VOS(agents, start + best, elem_size));
-	}
+        const size_t elem_size = sizeof(agents);
+        for (size_t i = 0; i < nmemb - 1; ++i) {
+                if (has_partner(U_VOS(agents, i, elem_size)))
+                        continue;
+                size_t n, start = i + 1;
+                n = (start + k) < nmemb ? k : nmemb - start;
+                size_t best = u_least_dist(U_VOS(agents, i, elem_size),
+                                           U_VOS(agents, start, elem_size), n,
+                                           elem_size, distance);
+                if (best < n)
+                        set_partners(U_VOS(agents, i, elem_size),
+                                     U_VOS(agents, start + best, elem_size));
+        }
 }
 
 /**
@@ -156,27 +157,24 @@ void u_knn_match(void * agents, size_t nmemb, unsigned k,
    \param rand_to Function that returns random int than its first parameter.
    Its second parameter is gen.
  */
-void u_cspm(
-	void * agents,
-	size_t nmemb, size_t k, unsigned clusters,
-	int (*cmp_cluster)(const void *, const void *),
-	bool (*has_partner)(const void *), // Does agent have partner
-	void (*set_partners)(void *, void *), // Set agents to be partners
-	double (*distance)(const void *, const void *)) // Distance between two agents
-
+void u_cspm(void *agents, size_t nmemb, size_t k, unsigned clusters, int (*cmp_cluster)(const void *, const void *), bool(*has_partner)(const void *),  // Does agent have partner
+            void(*set_partners)(void *, void *),        // Set agents to be partners
+            double(*distance)(const void *, const void *))      // Distance between two agents
 {
-	const size_t elem_size = sizeof(agents);
-	size_t cluster_size = nmemb / clusters;
+        const size_t elem_size = sizeof(agents);
+        size_t cluster_size = nmemb / clusters;
 
-	qsort(agents, nmemb, elem_size, cmp_cluster);
+        qsort(agents, nmemb, elem_size, cmp_cluster);
 
-	// Shuffle each of the clusters
-	for (unsigned i = 0; i < clusters; ++i) {
-		size_t first = i * cluster_size;
-		size_t last = first + cluster_size;
-		if (last > nmemb) last = nmemb;
-		u_shuffle(U_VOS(agents, first, elem_size), last - first, elem_size);
-	}
+        // Shuffle each of the clusters
+        for (unsigned i = 0; i < clusters; ++i) {
+                size_t first = i * cluster_size;
+                size_t last = first + cluster_size;
+                if (last > nmemb)
+                        last = nmemb;
+                u_shuffle(U_VOS(agents, first, elem_size), last - first,
+                          elem_size);
+        }
 
-	u_knn_match(agents, nmemb, k, has_partner, set_partners, distance);
+        u_knn_match(agents, nmemb, k, has_partner, set_partners, distance);
 }
