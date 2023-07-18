@@ -1,4 +1,4 @@
-project('useful', 'c', license : 'LGPL2.1', version : '0.2',
+project('useful', 'c', license : 'LGPL2.1', version : '0.3',
         default_options : ['c_std=c11'])
 
 # Update these for new releases if necessary

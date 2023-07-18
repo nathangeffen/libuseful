@@ -38,12 +38,7 @@ uint32_t u_rand_to(uint32_t to)
 
         uint32_t x;
         do {
-#if _SVID_SOURCE || _BSD_SOURCE || _XOPEN_SOURCE >= 500 \
-	|| _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED
-                x = random();
-#else
-                x = rand();
-#endif
+                x = U_RANDOM;
         } while (num_rand - defect <= (unsigned long)x);
 
         return x / bin_size;
@@ -77,104 +72,8 @@ void u_shuffle(void *data, size_t nmemb, size_t size)
 {
         for (size_t i = nmemb; i-- > 1;) {
                 size_t __to__ = i + 1;
-                size_t j = RANDOM;
+                size_t j = U_RANDOM % __to__;
                 u_swap(U_VOS(data, i, size), U_VOS(data, j, size), size);
         }
 }
 
-/**
-   Finds closest element in an array.
-
-   \param elem Variable to compare against
-   \param nmemb Array to search for closest value to *elem*
-   \param nmemb Number of elements in the array
-   \paran elem_size Size of an element in the array
-   \param distance Function that returns distance between two elements
-
-   \return index of element in *arr* that is closest to *elem*.
- */
-size_t u_least_dist(const void *elem, const void *arr,
-                    size_t nmemb, size_t elem_size,
-                    double (*distance)(const void *, const void *))
-{
-        double least_distance = DBL_MAX;
-        size_t least_index = nmemb;
-        for (size_t i = 0; i < nmemb; ++i) {
-                double d = distance(elem, U_VOS(arr, i, elem_size));
-                if (d < least_distance) {
-                        least_distance = d;
-                        least_index = i;
-                }
-        }
-        return least_index;
-}
-
-/**
-   For each agent, finds the nearest unmatched of k agents to the right of it in
-   an array of agents.
-
-   \param agents Array of pointers to agents
-   \param nmemb Number of entries in *agents*
-   \param k Number of adjacent entries to the right of the agent under
-   consideration to search
-   \param has_partner Function that determines if agent has partner
-   \param set_partners Function that places two agents into a partnership
-   \param distance Measures distance between two agents
-*/
-void u_knn_match(void *agents, size_t nmemb, unsigned k,
-                 bool (*has_partner)(const void *), void(*set_partners)(void *,
-                                                                        void *),
-                 double(*distance)(const void *, const void *))
-{
-        const size_t elem_size = sizeof(agents);
-        for (size_t i = 0; i < nmemb - 1; ++i) {
-                if (has_partner(U_VOS(agents, i, elem_size)))
-                        continue;
-                size_t n, start = i + 1;
-                n = (start + k) < nmemb ? k : nmemb - start;
-                size_t best = u_least_dist(U_VOS(agents, i, elem_size),
-                                           U_VOS(agents, start, elem_size), n,
-                                           elem_size, distance);
-                if (best < n)
-                        set_partners(U_VOS(agents, i, elem_size),
-                                     U_VOS(agents, start + best, elem_size));
-        }
-}
-
-/**
-   Matches a set of agents into partnerships using the Cluster Shuffle
-   Pair-Matching approximation algorithm.
-
-   \param agents Array of pointers to agents in mating pool
-   \param nmemb Number of agents in the partner market
-   \param k Number of neighbors to search for appropriate partner
-   \param clusters Number of clusters to divide the agents into
-   \param cmp_cluster Function that compares the cluster values of two agents
-   \param has_partner Function that determines if agent is in partnership
-   \param set_partners Function to place two agents into partnership
-   \param distance Function to measure distance between two agents
-   \param gen Random number generator (can be NULL)
-   \param rand_to Function that returns random int than its first parameter.
-   Its second parameter is gen.
- */
-void u_cspm(void *agents, size_t nmemb, size_t k, unsigned clusters, int (*cmp_cluster)(const void *, const void *), bool(*has_partner)(const void *),  // Does agent have partner
-            void(*set_partners)(void *, void *),        // Set agents to be partners
-            double(*distance)(const void *, const void *))      // Distance between two agents
-{
-        const size_t elem_size = sizeof(agents);
-        size_t cluster_size = nmemb / clusters;
-
-        qsort(agents, nmemb, elem_size, cmp_cluster);
-
-        // Shuffle each of the clusters
-        for (unsigned i = 0; i < clusters; ++i) {
-                size_t first = i * cluster_size;
-                size_t last = first + cluster_size;
-                if (last > nmemb)
-                        last = nmemb;
-                u_shuffle(U_VOS(agents, first, elem_size), last - first,
-                          elem_size);
-        }
-
-        u_knn_match(agents, nmemb, k, has_partner, set_partners, distance);
-}

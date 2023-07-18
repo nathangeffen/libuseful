@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['init_5fcapacity',['INIT_CAPACITY',['../array_8h.html#a1c2454dbbfd298b8e2cd09eb93b6a8f6',1,'array.h']]]
+  ['natural_5fnums_30',['natural_nums',['../structnatural__nums.html',1,'']]]
 ];

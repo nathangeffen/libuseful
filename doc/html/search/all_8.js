@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['natural_5fnums',['natural_nums',['../structnatural__nums.html',1,'']]]
+  ['val_5ftype_77',['val_type',['../csv_8h.html#a06160f741db215fbfbdc42babd287914',1,'csv.h']]]
 ];

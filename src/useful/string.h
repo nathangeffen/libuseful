@@ -54,7 +54,7 @@ struct u_string_array {
  */
 #define U_STRING(string) \
     struct u_string (string); \
-    U_ARRAY_NEW((string), str); \
+    U_ARRAY((string), str); \
     U_ARRAY_PUSH(string, str, '\0')
 
 /**
@@ -80,7 +80,7 @@ struct u_string_array {
  */
 #define U_STRING_ARRAY(array) \
     struct u_string_array array; \
-    U_ARRAY_NEW(array, strings)
+    U_ARRAY(array, strings)
 
 /**
  * Frees an array of strings.
@@ -94,7 +94,7 @@ void u_strcat(struct u_string *dest, const char *src);
 void u_strcpy(struct u_string *dest, const char *src);
 char *u_fgets(struct u_string *dest, FILE * stream);
 int u_sprintf(struct u_string *dest, const char *format, ...);
-void u_string_pushchar(struct u_string *dest, char c);
+void u_pushchar(struct u_string *dest, char c);
 struct u_string u_substr(const struct u_string *string, size_t index, size_t n);
 struct u_string_array u_string_split(const char *string_to_split,
                                      const char *delims);

@@ -7,6 +7,7 @@ Useful includes:
 
 - Very simple testing framework (see test.h)
 - Array management macros and functions (see array.h)
+- String management macros and functions (see string.h)
 - A few algorithms that are not already in glib or gsl (see algorithms.h)
 - CSV file input and output, and conversion to and from R-like dataframes (see csv.h)
 
@@ -85,30 +86,30 @@ int main(int argc, char *argv[])
 	struct string_arr strings;
 
 	// Print first 20 natural numbers
-	ARRAY_NEW(numbers, vals);
+	U_ARRAY(numbers, vals);
 	for (size_t i = 0; i < 20; ++i)
-		ARRAY_PUSH(numbers, vals, i);
+		U_ARRAY_PUSH(numbers, vals, i);
 	for (size_t i = 0; i < numbers.len; ++i)
 		    printf("%d ", numbers.vals[i]);
 	putchar('\n');
-	ARRAY_FREE(numbers, vals);
+	U_ARRAY_FREE(numbers, vals);
 
 	// Demonstrate freeing array elements
 	// Print three arbitrary strings
-	ARRAY_NEW(strings, str);
-	ARRAY_PUSH(strings, str, strdup("CAT"));
-	ARRAY_PUSH(strings, str, strdup("DOG"));
-	ARRAY_PUSH(strings, str, strdup("MOUSE"));
+	U_ARRAY(strings, str);
+	U_ARRAY_PUSH(strings, str, strdup("CAT"));
+	U_ARRAY_PUSH(strings, str, strdup("DOG"));
+	U_ARRAY_PUSH(strings, str, strdup("MOUSE"));
 	for (size_t i = 0; i < strings.len; ++i)
 		puts(strings.str[i]);
 
 	// Now there are two ways to free the array elements
 	// for (size_t i = 0; i < strings.len; ++i)
 	//	free(strings.str[i]);
-	// ARRAY_FREE(strings, str);
+	// U_ARRAY_FREE(strings, str);
 
 	// But this is the easier way
-	ARRAY_FREE_ELEMS(strings, str);
+	U_ARRAY_FREE_ELEMS(strings, str);
 
 	return 0;
 }

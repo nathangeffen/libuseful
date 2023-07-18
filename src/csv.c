@@ -12,12 +12,12 @@ struct string {
         char *str;
 };
 
-static struct csv_row csv_append_row(const char *strings[], size_t n)
+static struct u_csv_row u_csv_append_row(const char *strings[], size_t n)
 {
-        struct csv_row row;
+        struct u_csv_row row;
         char *s;
 
-        U_ARRAY_NEW(row, cells);
+        U_ARRAY(row, cells);
         for (size_t i = 0; i < n; ++i) {
                 if (NULL == (s = u_strdup(strings[i])))
                         error(EXIT_FAILURE, errno,
@@ -38,17 +38,17 @@ static struct csv_row csv_append_row(const char *strings[], size_t n)
    @return Empty ready-to-use csv structure with a header if specified.
  */
 
-struct csv u_csv_new(bool header, const char *strings[], size_t n)
+struct u_csv u_csv_new(bool header, const char *strings[], size_t n)
 {
 
-        struct csv cs;
+        struct u_csv cs;
         if (header) {
-                cs.header = csv_append_row(strings, n);
+                cs.header = u_csv_append_row(strings, n);
         } else {
                 cs.header.len = cs.header.capacity = 0;
                 cs.header.cells = NULL;
         }
-        U_ARRAY_NEW(cs, rows);
+        U_ARRAY(cs, rows);
         return cs;
 }
 
@@ -59,22 +59,22 @@ struct csv u_csv_new(bool header, const char *strings[], size_t n)
    @param n Number of columns (or cells)
  */
 
-void csv_append(struct csv *cs, const char *strings[], size_t n)
+void u_csv_append(struct u_csv *cs, const char *strings[], size_t n)
 {
-        struct csv_row row;
-        row = csv_append_row(strings, n);
+        struct u_csv_row row;
+        row = u_csv_append_row(strings, n);
         U_ARRAY_PUSH(*cs, rows, row);
 }
 
-static struct csv_row csv_read_row(FILE * f, const char delim)
+static struct u_csv_row u_csv_read_row(FILE * f, const char delim)
 {
-        struct csv_row row;
+        struct u_csv_row row;
         struct string cell;
         bool inrow = true, inquote = false;
         char c, *s;
 
-        U_ARRAY_NEW(row, cells);
-        U_ARRAY_NEW(cell, str);
+        U_ARRAY(row, cells);
+        U_ARRAY(cell, str);
         while (inrow) {
                 bool endcell = false;
                 if ((c = fgetc(f)) == '"') {
@@ -119,18 +119,18 @@ static struct csv_row csv_read_row(FILE * f, const char delim)
    @return Populated csv structure
  */
 
-struct csv csv_read(FILE * f, bool header, char delim)
+struct u_csv u_csv_read(FILE * f, bool header, char delim)
 {
-        struct csv cs;
-        struct csv_row row;
+        struct u_csv cs;
+        struct u_csv_row row;
 
-        U_ARRAY_NEW(cs, rows);
+        U_ARRAY(cs, rows);
         if (header)
-                cs.header = csv_read_row(f, delim);
+                cs.header = u_csv_read_row(f, delim);
         else
-                U_ARRAY_NEW(cs.header, cells);
+                U_ARRAY(cs.header, cells);
 
-        while ((row = csv_read_row(f, delim)).len > 0)
+        while ((row = u_csv_read_row(f, delim)).len > 0)
                 U_ARRAY_PUSH(cs, rows, row);
 
         U_ARRAY_FREE(row, cells);
@@ -148,7 +148,7 @@ struct csv csv_read(FILE * f, bool header, char delim)
    @return Value of cell[row, col]
  */
 
-const char *csv_at(const struct csv *cs, size_t row, size_t col)
+const char *u_csv_at(const struct u_csv *cs, size_t row, size_t col)
 {
         if (row < cs->len && col < cs->rows[row].len)
                 return cs->rows[row].cells[col];
@@ -156,7 +156,7 @@ const char *csv_at(const struct csv *cs, size_t row, size_t col)
                 return NULL;
 }
 
-static void csv_write_row(FILE * f, const struct csv_row *row)
+static void u_csv_write_row(FILE * f, const struct u_csv_row *row)
 {
         for (size_t i = 0; i < row->len && (i == 0 || fputc(',', f)); ++i)
                 fprintf(f, "%s", row->cells[i]);
@@ -172,11 +172,11 @@ static void csv_write_row(FILE * f, const struct csv_row *row)
    @return Value of cell[row, col]
  */
 
-void csv_write(FILE * f, const struct csv *cs)
+void u_csv_write(FILE * f, const struct u_csv *cs)
 {
-        csv_write_row(f, &cs->header);
+        u_csv_write_row(f, &cs->header);
         for (size_t i = 0; i < cs->len; ++i)
-                csv_write_row(f, cs->rows + i);
+                u_csv_write_row(f, cs->rows + i);
 }
 
 /**
@@ -189,7 +189,7 @@ void csv_write(FILE * f, const struct csv *cs)
    @return True if it confirms, else false
 */
 
-bool csv_isvalid(const struct csv *cs, bool verbose)
+bool u_csv_isvalid(const struct u_csv *cs, bool verbose)
 {
         size_t cols = 0;
         bool valid = true;
@@ -219,7 +219,7 @@ bool csv_isvalid(const struct csv *cs, bool verbose)
         return valid;
 }
 
-static void csv_free_row(struct csv_row *row)
+static void u_csv_free_row(struct u_csv_row *row)
 {
         for (size_t i = 0; i < row->len; ++i)
                 free(row->cells[i]);
@@ -232,29 +232,29 @@ static void csv_free_row(struct csv_row *row)
    @param cs struct to free
 */
 
-void csv_free(struct csv *cs)
+void u_csv_free(struct u_csv *cs)
 {
 
-        csv_free_row(&cs->header);
+        u_csv_free_row(&cs->header);
 
         for (size_t i = 0; i < cs->len; ++i)
-                csv_free_row(&cs->rows[i]);
+                u_csv_free_row(&cs->rows[i]);
         U_ARRAY_FREE(*cs, rows);
 }
 
-static void csv_row_to_df_row(const struct csv *cs, struct dataframe *df,
+static void u_csv_row_to_df_row(const struct u_csv *cs, struct u_dataframe *df,
                               size_t row, size_t cols,
-                              const enum val_type col_types[])
+                              const enum u_val_type col_types[])
 {
         for (size_t i = 0; i < cols; ++i) {
                 if (col_types[i] == str) {
                         df->vals[row * cols + i].str =
-                            u_strdup(csv_at(cs, row, i));
+                            u_strdup(u_csv_at(cs, row, i));
                 } else {
                         char *ptr;
                         df->vals[row * cols + i].dbl =
-                            strtod(csv_at(cs, row, i), &ptr);
-                        if (strlen(ptr) > 0 || strlen(csv_at(cs, row, i)) == 0)
+                            strtod(u_csv_at(cs, row, i), &ptr);
+                        if (strlen(ptr) > 0 || strlen(u_csv_at(cs, row, i)) == 0)
                                 fprintf(stderr, "Error converting '%s' to "
                                         "double.\n", cs->rows[row].cells[i]);
                         errno = EINVAL;
@@ -262,12 +262,12 @@ static void csv_row_to_df_row(const struct csv *cs, struct dataframe *df,
         }
 }
 
-static struct csv_row rowdup(const struct csv_row *row)
+static struct u_csv_row rowdup(const struct u_csv_row *row)
 {
-        struct csv_row result;
+        struct u_csv_row result;
         char *s;
 
-        U_ARRAY_NEW(result, cells);
+        U_ARRAY(result, cells);
         for (size_t i = 0; i < row->len; ++i) {
                 if (NULL == (s = u_strdup(row->cells[i])))
                         error(EXIT_FAILURE, errno,
@@ -281,7 +281,7 @@ static struct csv_row rowdup(const struct csv_row *row)
 
 /**
    Creates a new dataframe. The dataframe must be freed when finished using it
-   with dataframe_free().
+   with u_dataframe_free().
 
    @param cols number of columns
    @param array of strings representing names of columns
@@ -290,17 +290,17 @@ static struct csv_row rowdup(const struct csv_row *row)
    @return a ready-to-use dataframe
  */
 
-struct dataframe dataframe_new(size_t cols, const char *strings[],
-                               const enum val_type types[])
+struct u_dataframe u_dataframe_new(size_t cols, const char *strings[],
+                               const enum u_val_type types[])
 {
-        struct dataframe df;
+        struct u_dataframe df;
         df.vals = NULL;
         df.rows = 0;
         df.cols = cols;
 
-        df.header = csv_append_row(strings, cols);
+        df.header = u_csv_append_row(strings, cols);
 
-        if (NULL == (df.type = malloc(cols * sizeof(enum val_type))))
+        if (NULL == (df.type = malloc(cols * sizeof(enum u_val_type))))
                 error(EXIT_FAILURE, errno,
                       "Failed to allocate space for dataframe types.");
 
@@ -324,12 +324,12 @@ struct dataframe dataframe_new(size_t cols, const char *strings[],
    @return Dataframe with same number of rows and columns as the csv.
 */
 
-struct dataframe csv_to_dataframe(const struct csv *cs,
-                                  const enum val_type col_types[])
+struct u_dataframe u_csv_to_dataframe(const struct u_csv *cs,
+                                  const enum u_val_type col_types[])
 {
-        struct dataframe df;
+        struct u_dataframe df;
 
-        assert(csv_isvalid(cs, false));
+        assert(u_csv_isvalid(cs, false));
         assert(cs->len > 0);
 
         size_t rows = cs->len;
@@ -337,11 +337,11 @@ struct dataframe csv_to_dataframe(const struct csv *cs,
 
         df.rows = rows;
         df.cols = cols;
-        df.vals = malloc(rows * cols * sizeof(union str_dbl));
+        df.vals = malloc(rows * cols * sizeof(union u_str_dbl));
         if (NULL == df.vals)
                 error(EXIT_FAILURE, errno,
                       "Failed to allocate space for dataframe cells.");
-        df.type = malloc(cols * sizeof(enum val_type));
+        df.type = malloc(cols * sizeof(enum u_val_type));
         if (NULL == df.type)
                 error(EXIT_FAILURE, errno,
                       "Failed to allocate space for dataframe types.");
@@ -349,7 +349,7 @@ struct dataframe csv_to_dataframe(const struct csv *cs,
                 df.type[i] = col_types[i];
 
         for (size_t i = 0; i < rows; ++i)
-                csv_row_to_df_row(cs, &df, i, cols, col_types);
+                u_csv_row_to_df_row(cs, &df, i, cols, col_types);
 
         df.header = rowdup(&cs->header);
 
@@ -366,7 +366,7 @@ struct dataframe csv_to_dataframe(const struct csv *cs,
    @return Dataframe with same number of rows and columns as the csv.
 */
 
-union str_dbl dataframe_at(const struct dataframe *df, size_t row, size_t col)
+union u_str_dbl u_dataframe_at(const struct u_dataframe *df, size_t row, size_t col)
 {
         assert(row < df->rows);
         assert(col < df->cols);
@@ -383,7 +383,7 @@ union str_dbl dataframe_at(const struct dataframe *df, size_t row, size_t col)
    @return type (either str or dbl) of the dataframe column
 */
 
-enum val_type dataframe_col_type(struct dataframe *df, size_t col)
+enum u_val_type u_dataframe_col_type(struct u_dataframe *df, size_t col)
 {
         assert(col < df->cols);
         return df->type[col];
@@ -396,11 +396,11 @@ enum val_type dataframe_col_type(struct dataframe *df, size_t col)
    @param vals array of values to append
 */
 
-void dataframe_append(struct dataframe *df, const union str_dbl vals[])
+void u_dataframe_append(struct u_dataframe *df, const union u_str_dbl vals[])
 {
         size_t rows = df->rows + 1, cols = df->cols;
 
-        df->vals = realloc(df->vals, rows * cols * sizeof(union str_dbl));
+        df->vals = realloc(df->vals, rows * cols * sizeof(union u_str_dbl));
         if (NULL == df->vals)
                 error(EXIT_FAILURE, errno,
                       "Failed to allocate space for dataframe column.");
@@ -432,13 +432,13 @@ void dataframe_append(struct dataframe *df, const union str_dbl vals[])
    @param df dataframe to append to
 */
 
-void dataframe_append_var(struct dataframe *df, ...)
+void u_dataframe_append_var(struct u_dataframe *df, ...)
 {
         size_t rows = df->rows + 1, cols = df->cols;
         va_list ap;
 
         va_start(ap, df);
-        df->vals = realloc(df->vals, rows * cols * sizeof(union str_dbl));
+        df->vals = realloc(df->vals, rows * cols * sizeof(union u_str_dbl));
         if (NULL == df->vals)
                 error(EXIT_FAILURE, errno,
                       "Failed to allocate space for dataframe column.");
@@ -469,9 +469,9 @@ void dataframe_append_var(struct dataframe *df, ...)
    @param df dataframe to write out
 */
 
-void dataframe_write(FILE * f, const struct dataframe *df)
+void u_dataframe_write(FILE * f, const struct u_dataframe *df)
 {
-        csv_write_row(f, &df->header);
+        u_csv_write_row(f, &df->header);
         for (size_t i = 0; i < df->rows; ++i) {
                 for (size_t j = 0; j < df->cols && (j == 0 || fputc(',', f));
                      ++j)
@@ -493,14 +493,14 @@ void dataframe_write(FILE * f, const struct dataframe *df)
    @return csv structure
 */
 
-struct csv dataframe_to_csv(const struct dataframe *df)
+struct u_csv u_dataframe_to_csv(const struct u_dataframe *df)
 {
-        struct csv cs = u_csv_new(true, (const char **)df->header.cells,
+        struct u_csv cs = u_csv_new(true, (const char **)df->header.cells,
                                   df->header.len);
         const size_t rows = df->rows, cols = df->cols;
         for (size_t i = 0; i < rows; ++i) {
                 char *strings[cols];
-                struct csv_row row;
+                struct u_csv_row row;
                 for (size_t j = 0; j < cols; ++j) {
                         if (df->type[j] == dbl) {
                                 char s[50];
@@ -519,7 +519,7 @@ struct csv dataframe_to_csv(const struct dataframe *df)
                                               "csv cell.");
                         }
                 }
-                row = csv_append_row((const char **)strings, cols);
+                row = u_csv_append_row((const char **)strings, cols);
                 U_ARRAY_PUSH(cs, rows, row);
                 for (size_t j = 0; j < cols; ++j)
                         free(strings[j]);
@@ -535,9 +535,9 @@ struct csv dataframe_to_csv(const struct dataframe *df)
    @return matrix structure
 */
 
-struct matrix dataframe_to_matrix(const struct dataframe *df)
+struct u_matrix u_dataframe_to_matrix(const struct u_dataframe *df)
 {
-        struct matrix mat;
+        struct u_matrix mat;
 
         const size_t rows = df->rows;
         const size_t cols = df->cols;
@@ -552,17 +552,17 @@ struct matrix dataframe_to_matrix(const struct dataframe *df)
                         if (df->type[j] == str) {
                                 char *ptr;
                                 mat.vals[i * cols + j] =
-                                    strtod(dataframe_at(df, i, j).str, &ptr);
+                                    strtod(u_dataframe_at(df, i, j).str, &ptr);
                                 if (strlen(ptr) > 0 ||
-                                    strlen(dataframe_at(df, i, j).str) == 0) {
+                                    strlen(u_dataframe_at(df, i, j).str) == 0) {
                                         fprintf(stderr, "Error converting '%s' "
                                                 "to double.\n",
-                                                dataframe_at(df, i, j).str);
+                                                u_dataframe_at(df, i, j).str);
                                         errno = EINVAL;
                                 }
                         } else {
                                 mat.vals[i * cols + j] =
-                                    dataframe_at(df, i, j).dbl;
+                                    u_dataframe_at(df, i, j).dbl;
                         }
                 }
         }
@@ -575,7 +575,7 @@ struct matrix dataframe_to_matrix(const struct dataframe *df)
    @param df dataframe to free
 */
 
-void dataframe_free(struct dataframe *df)
+void u_dataframe_free(struct u_dataframe *df)
 {
         for (size_t i = 0; i < df->rows; ++i) {
                 for (size_t j = 0; j < df->cols; ++j) {
@@ -583,7 +583,7 @@ void dataframe_free(struct dataframe *df)
                                 free(df->vals[i * df->cols + j].str);
                 }
         }
-        csv_free_row(&df->header);
+        u_csv_free_row(&df->header);
         free(df->vals);
         free(df->type);
         df->rows = df->cols = 0;
@@ -596,11 +596,11 @@ void dataframe_free(struct dataframe *df)
    @return matrix of real numbers
 */
 
-struct matrix csv_to_matrix(const struct csv *cs)
+struct u_matrix u_csv_to_matrix(const struct u_csv *cs)
 {
-        struct matrix mat;
+        struct u_matrix mat;
 
-        assert(csv_isvalid(cs, false));
+        assert(u_csv_isvalid(cs, false));
         assert(cs->len > 0);
 
         size_t rows = cs->len;
@@ -637,7 +637,7 @@ struct matrix csv_to_matrix(const struct csv *cs)
    @return Value returned
  */
 
-inline double matrix_at(const struct matrix *mat, size_t row, size_t col)
+inline double u_matrix_at(const struct u_matrix *mat, size_t row, size_t col)
 {
         assert(row < mat->rows);
         assert(col < mat->cols);
@@ -653,7 +653,7 @@ inline double matrix_at(const struct matrix *mat, size_t row, size_t col)
    @param val Value at which to set it
  */
 
-inline void matrix_set(struct matrix *mat, size_t row, size_t col, double val)
+inline void u_matrix_set(struct u_matrix *mat, size_t row, size_t col, double val)
 {
         assert(row < mat->rows);
         assert(col < mat->cols);
@@ -666,7 +666,7 @@ inline void matrix_set(struct matrix *mat, size_t row, size_t col, double val)
    @param mat Matrix to free
  */
 
-void matrix_free(struct matrix *matrix)
+void u_matrix_free(struct u_matrix *matrix)
 {
         free(matrix->vals);
         matrix->rows = matrix->cols = 0;

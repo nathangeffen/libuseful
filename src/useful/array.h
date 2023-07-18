@@ -19,7 +19,7 @@
 
 @endverbatim
 
-Use U_ARRAY_NEW to initialize MyArray variables, ARRAY_APPEND to add elements
+Use U_ARRAY to initialize MyArray variables, ARRAY_APPEND to add elements
 to it and U_ARRAY_FREE to return the array to the heap. ARRAY_APPEND increases
 the capacity of the array if it is full by calling realloc.
 
@@ -54,11 +54,15 @@ void u_strcat(char *dest, const char *src)
 /**
   Initial capacity of the array.
   */
+#ifndef U_INIT_CAPACITY
 #define U_INIT_CAPACITY 10
+#endif
 /**
   Factor to grow the array by when it it is full..
   */
+#ifndef U_GROWTH
 #define U_GROWTH 3 / 2
+#endif
 size_t u_array_grow(void **array, size_t current_capacity, size_t object_size);
 
 /**
@@ -67,7 +71,7 @@ size_t u_array_grow(void **array, size_t current_capacity, size_t object_size);
   @param array Name of the struct variable containing the array
   @param element Name of the struct pointer element that represents the array
   */
-#define U_ARRAY_NEW(array, element) do {					\
+#define U_ARRAY(array, element) do {					\
     (array).len = 0;					\
     (array).element = NULL;					\
     (array).capacity = u_array_grow( (void *) &(array).element, \

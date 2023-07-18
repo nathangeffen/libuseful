@@ -8,13 +8,10 @@
 #ifndef USEFUL_ALGORITHMS_H
 #define USEFUL_ALGORITHMS_H
 
-#ifndef RANDOM
-#if _SVID_SOURCE || _BSD_SOURCE || _XOPEN_SOURCE >= 500 \
-	|| _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED
-#define RANDOM random() % to __to__
-#else
-#define RANDOM rand() % __to__
-#endif
+// Define this above the include of algorithms.h or useful.h if
+// you want to use a different random number generator
+#ifndef U_RANDOM
+#define U_RANDOM rand()
 #endif
 
 #include <float.h>
@@ -34,20 +31,5 @@ uint32_t u_rand_to(uint32_t to);
 void u_swap(void *a, void *b, size_t size);
 
 void u_shuffle(void *data, size_t nmemb, size_t size);
-
-size_t u_least_dist(const void *elem, const void *arr,
-                    size_t nmemb, size_t elem_size,
-                    double (*distance)(const void *, const void *));
-
-void u_knn_match(void *agents, size_t nmemb, unsigned k,
-                 bool (*has_partner)(const void *), void(*set_partners)(void *,
-                                                                        void *),
-                 double(*distance)(const void *, const void *));
-
-void u_cspm(void *agents, size_t nmemb, size_t neighbors, unsigned clusters,
-            int (*cmp_cluster)(const void *, const void *),
-            bool(*has_partner)(const void *),
-            void(*set_partners)(void *, void *),
-            double(*distance)(const void *, const void *));
 
 #endif

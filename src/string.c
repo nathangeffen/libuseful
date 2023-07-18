@@ -106,7 +106,7 @@ int u_sprintf(struct u_string *dest, const char *fmt, ...)
  * \param dest String which must be appended
  * \param c Character to append
  */
-void u_string_pushchar(struct u_string *dest, char c)
+void u_pushchar(struct u_string *dest, char c)
 {
         dest->str[dest->len - 1] = c;
         if (c != '\0')
@@ -127,9 +127,9 @@ struct u_string u_substr(const struct u_string *string, size_t index, size_t n)
 {
         U_STRING(result);
         for (size_t i = index; i < string->len && i < index + n && errno == 0; i++)
-                u_string_pushchar(&result, string->str[i]);
+                u_pushchar(&result, string->str[i]);
         if (result.str[result.len - 1] != '\0' && errno == 0)
-                u_string_pushchar(&result, '\0');
+                u_pushchar(&result, '\0');
         return result;
 }
 
@@ -157,7 +157,7 @@ struct u_string_array u_string_split(const char *string_to_split,
                                      const char *delims)
 {
         struct u_string_array result;
-        U_ARRAY_NEW(result, strings);
+        U_ARRAY(result, strings);
         U_STRING(string);
         for (const char *s = string_to_split; errno == 0; s++) {
                 if (in(delims, *s) || *s == '\0') {
@@ -170,7 +170,7 @@ struct u_string_array u_string_split(const char *string_to_split,
                         if (*s == '\0')
                                 break;
                 } else {
-                        u_string_pushchar(&string, *s);
+                        u_pushchar(&string, *s);
                 }
         }
         U_STRING_FREE(string);
