@@ -82,6 +82,15 @@ struct u_string_array {
     struct u_string_array array; \
     U_ARRAY(array, strings)
 
+#define U_JOIN(array, n, delim, fmt, result) \
+do { \
+        for (size_t __i = 0; __i < n; ++__i) { \
+                u_sprintf_cat(&result, fmt, array[__i]); \
+                if (__i + 1 < n) \
+                        u_strcat(&result, delim); \
+        } \
+} while(0)
+
 /**
  * Frees an array of strings.
  *
@@ -94,9 +103,11 @@ void u_strcat(struct u_string *dest, const char *src);
 void u_strcpy(struct u_string *dest, const char *src);
 char *u_fgets(struct u_string *dest, FILE * stream);
 int u_sprintf(struct u_string *dest, const char *format, ...);
+int u_sprintf_cat(struct u_string *dest, const char *fmt, ...);
 void u_pushchar(struct u_string *dest, char c);
 struct u_string u_substr(const struct u_string *string, size_t index, size_t n);
 struct u_string_array u_string_split(const char *string_to_split,
                                      const char *delims);
+struct u_string u_join(const struct u_string_array *array, const char *delim);
 
 #endif

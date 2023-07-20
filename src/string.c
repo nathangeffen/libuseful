@@ -16,7 +16,7 @@ static inline void copy(struct u_string *dest, const char *src)
         } while (errno == 0 && *s++ != 0);
 }
 
-/*
+/**
  * Concatenates src to dest, managing memory in the process.
  *
  * \param dest String to concat to
@@ -28,7 +28,7 @@ void u_strcat(struct u_string *dest, const char *src)
         copy(dest, src);
 }
 
-/*
+/**
  * Copies src to dest, managing memory in the process.
  *
  * \param dest String to copy to
@@ -40,7 +40,7 @@ void u_strcpy(struct u_string *dest, const char *src)
         copy(dest, src);
 }
 
-/*
+/**
  * Implements the stdlib fgets function, in addition taking care of memory.
  *
  * \param dest String in which to store line from file
@@ -69,7 +69,25 @@ char *u_fgets(struct u_string *dest, FILE * file)
         return NULL;
 }
 
-/*
+static int u_vsprintf(struct u_string *dest, const char *fmt, va_list ap)
+{
+        va_list ap2;
+        va_copy(ap2, ap);
+        int i = vsnprintf(NULL, 0, fmt, ap) + 1;
+        if (i >= dest->capacity) {
+                size_t j =
+                    u_array_grow((void *)&dest->str, i * sizeof(*dest->str), i);
+                if (j == 0)
+                        return -1;
+                dest->capacity = j;
+        }
+        i = vsnprintf(dest->str, dest->capacity - 1, fmt, ap2);
+        dest->len = strlen(dest->str) + 1;
+        va_end(ap2);
+        return i;
+}
+
+/**
  * Implements the sprintf function, in addition taking care of memory.
  *
  * \param dest String in which to place output
@@ -83,24 +101,38 @@ int u_sprintf(struct u_string *dest, const char *fmt, ...)
 {
         va_list ap;
         va_start(ap, fmt);
-
-        int i = vsnprintf(NULL, 0, fmt, ap) + 1;
-        if (i >= dest->capacity) {
-                int j =
-                    u_array_grow((void *)&dest->str, i * sizeof(*dest->str), i);
-                if (j == 0)
-                        return -1;
-                dest->capacity = j;
-        }
-        va_end(ap);
-        va_start(ap, fmt);
-        i = vsnprintf(dest->str, dest->capacity - 1, fmt, ap);
-        dest->len = strlen(dest->str) + 1;
+        int i = u_vsprintf(dest, fmt, ap);
         va_end(ap);
         return i;
 }
 
-/*
+/**
+ * Combines sprinttf and concat operations, taking care of memory. This function
+ * prints a string to the end of another string.
+ *
+ * \param dest String in which to place output
+ * \param fmt String that specifies format - see sprintf for details
+ * \param ... See sprintf for details
+ *
+ * \return Number of characters appended to dest->str (as reported by vsnprintf) upon
+ * success else -1 upon failure.
+ */
+int u_sprintf_cat(struct u_string *dest, const char *fmt, ...)
+{
+        va_list ap;
+        va_start(ap, fmt);
+
+        U_STRING(t);
+        int i = u_vsprintf(&t, fmt, ap);
+        if (errno == 0)
+                u_strcat(dest, t.str);
+        else
+                i = -1;
+        U_STRING_FREE(t);
+        return i;
+}
+
+/**
  * Appends a character to the end of a string, taking care of memory.
  *
  * \param dest String which must be appended
@@ -113,7 +145,7 @@ void u_pushchar(struct u_string *dest, char c)
                 U_ARRAY_PUSH(*dest, str, '\0');
 }
 
-/*
+/**
  * Creates a new string that is a substring of another.
  *
  * \param string String from which substring must be taken
@@ -126,14 +158,15 @@ void u_pushchar(struct u_string *dest, char c)
 struct u_string u_substr(const struct u_string *string, size_t index, size_t n)
 {
         U_STRING(result);
-        for (size_t i = index; i < string->len && i < index + n && errno == 0; i++)
+        for (size_t i = index; i < string->len && i < index + n && errno == 0;
+             i++)
                 u_pushchar(&result, string->str[i]);
         if (result.str[result.len - 1] != '\0' && errno == 0)
                 u_pushchar(&result, '\0');
         return result;
 }
 
-/*
+/**
  * Checks if a character is in a set of delimiters.
  */
 static inline bool in(const char *delims, char c)
@@ -144,7 +177,7 @@ static inline bool in(const char *delims, char c)
         return false;
 }
 
-/*
+/**
  * Splits a string into an array of strings. Characters in delims
  * indicate the delimiters. No zero length strings are included in the output.
  *
@@ -176,3 +209,23 @@ struct u_string_array u_string_split(const char *string_to_split,
         U_STRING_FREE(string);
         return result;
 }
+
+/**
+ * Concatenates an array of strings into a single string.
+
+ * \param array Array of strings to join
+ * \param delim Delimiter to between each concatenated string
+ *
+ * \return A u_string with the concatenated members of the array
+ */
+struct u_string u_join(const struct u_string_array *array, const char *delim)
+{
+        U_STRING(result);
+        for (size_t i = 0; i < array->len; ++i) {
+                u_strcat(&result, array->strings[i].str);
+                if (i + 1 < array->len)
+                        u_strcat(&result, delim);
+        }
+        return result;
+}
+
