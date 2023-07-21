@@ -25,6 +25,7 @@
 #define USEFUL_STRING_H
 
 #include <stdio.h>
+#include <stdbool.h>
 #include "array.h"
 
 
@@ -84,12 +85,13 @@ struct u_string_array {
 
 #define U_JOIN(array, n, delim, fmt, result) \
 do { \
-        for (size_t __i = 0; __i < n; ++__i) { \
+        for (size_t __i = 0; __i < n && errno == 0; ++__i) { \
                 u_sprintf_cat(&result, fmt, array[__i]); \
                 if (__i + 1 < n) \
                         u_strcat(&result, delim); \
         } \
 } while(0)
+
 
 /**
  * Frees an array of strings.
@@ -109,5 +111,7 @@ struct u_string u_substr(const struct u_string *string, size_t index, size_t n);
 struct u_string_array u_string_split(const char *string_to_split,
                                      const char *delims);
 struct u_string u_join(const struct u_string_array *array, const char *delim);
+struct u_string u_join_conv(size_t n, size_t bytes, const void *array,
+                            const char *delim, char *(*conv)(const void *), bool free_str);
 
 #endif

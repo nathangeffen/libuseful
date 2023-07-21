@@ -229,3 +229,17 @@ struct u_string u_join(const struct u_string_array *array, const char *delim)
         return result;
 }
 
+struct u_string u_join_conv(size_t n, size_t bytes, const void *array,
+                            const char *delim, char *(*conv)(const void *), bool free_str)
+{
+        U_STRING(result);
+        size_t e = n * bytes;
+        for (size_t i = 0; i < e; i += bytes) {
+                char *s = conv(array + i);
+                u_strcat(&result, s);
+                if (i + bytes < e)
+                        u_strcat(&result, delim);
+                if (free_str) free(s);
+        }
+        return result;
+}
